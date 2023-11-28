@@ -132,7 +132,6 @@ export default class dbController {
       });
     });
 
-    console.log(check)
     return check;
   }
 
