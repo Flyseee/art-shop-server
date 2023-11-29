@@ -1,14 +1,11 @@
 import express from "express";
 import dataBase from "../index.js";
-import HEADERS from "./headersConst.js";
 
 const autorisationRoutes = express.Router();
 
 autorisationRoutes.post("/", async (req, res) => {
-  const token = req.body.token;
-
-  res.set(HEADERS);
-
+  const token = req.body;
+  
   if (!token) {
     res.status(400).json({ msg: "Отсутствует тело запроса" });
     return;

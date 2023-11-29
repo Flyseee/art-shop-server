@@ -1,14 +1,12 @@
 import express from "express";
 import dataBase from "../index.js";
 import OptionalBody from "../optional/OptionalBody.js";
-import HEADERS from "./headersConst.js";
 
 const requestRouter = express.Router();
 
 requestRouter.get("/getAllUnprocReq", async (req, res) => {
   const allUnprocReq = await dataBase.getAllUnprocReq();
 
-  res.set(HEADERS);
   res.status(200).json(allUnprocReq);
 });
 
@@ -17,7 +15,6 @@ requestRouter.post("/orderPainting", (req, res) => {
   const newOrderReq = req.body;
   const optionalBody = new OptionalBody(newOrderReq, orderReqFields);
 
-  res.set(HEADERS);
 
   if (optionalBody.isPresent()) {
     dataBase.addOrderReq(newOrderReq);
@@ -39,8 +36,6 @@ requestRouter.post("/buyPainting", (req, res) => {
   const newBuyReq = req.body;
   const optionalBody = new OptionalBody(newBuyReq, buyReqFields);
 
-  res.set(HEADERS);
-
   if (optionalBody.isPresent()) {
     dataBase.addBuyReq(newBuyReq);
     res.status(200).json("OK");
@@ -58,8 +53,6 @@ requestRouter.post("/processRequest", async (req, res) => {
 
   if (optionalBody.isPresent()) {
     const result = await dataBase.processRequest(reqToUpdate);
-    
-    res.set(HEADERS);
 
     if (result) {
       res.status(200).json("OK");
