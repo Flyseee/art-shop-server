@@ -151,10 +151,8 @@
 
 ```json
 {
-  "name": "Алина",
-  "phone_number": "+79216279682",
-  "paintingsIdArr": ["2XOUzrV8hDBPb6cg"],
-  "request_status": "unprocessed"
+  "_id": "92oUjhQorYP2U2mu",
+  "paintingsIdArr": ["2XOUzrV8hDBPb6cg"]
 }
 ```
 
@@ -162,10 +160,7 @@
 
 ```json
 {
-  "name": "Полина",
-  "phone_number": "+79152384696",
-  "comment": "Нарисуйте моего песика, пожалуйста",
-  "request_status": "unprocessed"
+  "_id": "BIMr0JIAgg5cVGjB"
 }
 ```
 
