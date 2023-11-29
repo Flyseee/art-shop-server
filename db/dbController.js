@@ -19,7 +19,10 @@ export default class dbController {
     this.tokens = new Datastore({ filename: "./db/tokens.db", autoload: true });
   }
 
-  //Метод для добавления заявки на заказ картины
+  /**
+   * Метод для добавления заявки на заказ картины
+   * @param {newRequest} newRequest json или object с заявкой на заказ картины для добавления в базу данных
+   */
   async addOrderReq(newRequest) {
     await new Promise((resolve, reject) => {
       this.orderRequests.insert(newRequest, (err, doc) => {
@@ -32,7 +35,10 @@ export default class dbController {
     });
   }
 
-  //Метод для добавления заявки на покупку картины
+  /**
+   * Метод для добавления заявки на покупку картины
+   * @param {*} newRequest json или object с заявкой на покупку картины для добавления в базу данных
+   */
   async addBuyReq(newRequest) {
     await new Promise((resolve, reject) => {
       this.buyRequests.insert(newRequest, (err, doc) => {
@@ -45,8 +51,11 @@ export default class dbController {
     });
   }
 
-  //Метод для добавления картины
-  async addPainting(painting) {
+  /**
+   * Метод для добавления картины
+   * @param {*} newPainting json или object с картиной для добавления в базу данных
+   */
+  async addPainting(newPainting) {
     await new Promise((resolve, reject) => {
       this.paintings.insert(painting, (err, doc) => {
         if (err) {
@@ -58,7 +67,10 @@ export default class dbController {
     });
   }
 
-  // Метод для получения всех картин
+  /**
+   * Метод для получения всех картин
+   * @returns список картин
+   */
   async getAllPaintings() {
     const paintings = await new Promise((resolve, reject) => {
       this.paintings.find({}, (err, docs) => {
@@ -73,7 +85,10 @@ export default class dbController {
     return paintings;
   }
 
-  //Метод для получения всех необработанных заявок на покупку картины
+  /**
+   * Метод для получения всех необработанных заявок на покупку картины
+   * @returns список необработанных заявок на покупку картины
+   */
   async getAllUnprocBuyReq() {
     const docs = await new Promise((resolve, reject) => {
       this.buyRequests.find({ request_status: "unprocessed" }, (err, docs) => {
@@ -88,7 +103,10 @@ export default class dbController {
     return docs;
   }
 
-  //Метод для получения всех необработанных заявок на заказ картины
+  /**
+   * Метод для получения всех необработанных заявок на заказ картины
+   * @returns список необработанных заявок на заказ картины
+   */
   async getAllUnprocOrderReq() {
     const docs = await new Promise((resolve, reject) => {
       this.orderRequests.find(
@@ -106,7 +124,10 @@ export default class dbController {
     return docs;
   }
 
-  //Метод для получения всех необработанных заявок
+  /**
+   * Метод для получения всех необработанных заявок
+   * @returns список необработанных заявок
+   */
   async getAllUnprocReq() {
     const unprocBuyReq = await this.getAllUnprocBuyReq();
     const unprocOrderReq = await this.getAllUnprocOrderReq();
@@ -116,7 +137,11 @@ export default class dbController {
     return allUnprocReq;
   }
 
-  //Метод для проверки токена
+  /**
+   * Метод для проверки токена на наличие в базе данных
+   * @param {*} token токен для проверки
+   * @returns boolean, результат проверки токена
+   */
   async checkToken(token) {
     const check = await new Promise((resolve, reject) => {
       this.tokens.findOne({ token: token }, (err, doc) => {
@@ -135,6 +160,12 @@ export default class dbController {
     return check;
   }
 
+  /**
+   * Метод для проверки наличия в базе данных документа
+   * @param {*} Id идентификатор документа
+   * @param {*} dbToSearch база данных для поиска документа
+   * @returns boolean, результат проверки Id
+   */
   async checkId(Id, dbToSearch) {
     let db = null;
     switch (dbToSearch) {
@@ -168,7 +199,11 @@ export default class dbController {
     return check;
   }
 
-  //Метод для обработки заявки
+  /**
+   * Метод для обработки заявки
+   * @param {*} req object с заявкой для обработки
+   * @returns boolean, результат обработки заявки
+   */
   async processRequest(req) {
     const requestId = req._id;
     const paintingsIdArr = req.paintingsIdArr;
@@ -179,11 +214,11 @@ export default class dbController {
 
       if (check) {
         for (let i = 0; i < paintingsIdArr.length; i++) {
-            check = await this.checkId(paintingsIdArr[i], 'painting');
+          check = await this.checkId(paintingsIdArr[i], "painting");
 
-            if (!check) {
-              break;
-            }
+          if (!check) {
+            break;
+          }
         }
       }
 
@@ -201,7 +236,10 @@ export default class dbController {
     return check;
   }
 
-  //Метод для смены статуса заявки на заказ картины
+  /**
+   * Метод для смены статуса заявки на заказ картины
+   * @param {*} requestId Id заявки на заказ картины для смены статуса
+   */
   async changeOrderReqStatus(requestId) {
     const request = await new Promise((resolve, reject) => {
       this.orderRequests.findOne({ _id: requestId }, (err, doc) => {
@@ -230,7 +268,11 @@ export default class dbController {
     );
   }
 
-  //Метод для обработки заявки на покупку картины
+  /**
+   * Метод для обработки заявки на покупку картины
+   * @param {*} requestId Id заявки на покупку картины для смены статуса
+   * @param {*} paintingsIdArr список Id картин для смены статуса
+   */
   async processBuyReq(requestId, paintingsIdArr) {
     await this.changeBuyReqStatus(requestId);
 
@@ -239,7 +281,10 @@ export default class dbController {
     }
   }
 
-  //Метод для смены статуса заявки на покупку картины
+  /**
+   * Метод для смены статуса заявки на покупку картины
+   * @param {*} requestId Id заявки на покупку картины для смены статуса
+   */
   async changeBuyReqStatus(requestId) {
     const request = await new Promise((resolve, reject) => {
       this.buyRequests.findOne({ _id: requestId }, (err, doc) => {
@@ -268,7 +313,10 @@ export default class dbController {
     );
   }
 
-  //Метод для смены статуса картины
+  /**
+   * Метод для смены статуса картины
+   * @param {*} paintingtId Id картины для смены статуса
+   */
   async changePaintingStatus(paintingtId) {
     const painting = await new Promise((resolve, reject) => {
       this.paintings.findOne({ _id: paintingtId }, (err, doc) => {
