@@ -16,7 +16,6 @@ export default class dbController {
       filename: "./db/orderRequests.db",
       autoload: true,
     });
-    this.tokens = new Datastore({ filename: "./db/tokens.db", autoload: true });
   }
 
   /**
@@ -138,29 +137,6 @@ export default class dbController {
   }
 
   /**
-   * Метод для проверки токена на наличие в базе данных
-   * @param {*} token токен для проверки
-   * @returns boolean, результат проверки токена
-   */
-  async checkToken(token) {
-    const check = await new Promise((resolve, reject) => {
-      this.tokens.findOne({ token: token }, (err, doc) => {
-        if (err) {
-          reject(err);
-        } else {
-          if (doc) {
-            resolve(true);
-          } else {
-            resolve(false);
-          }
-        }
-      });
-    });
-
-    return check;
-  }
-
-  /**
    * Метод для проверки наличия в базе данных документа
    * @param {*} Id идентификатор документа
    * @param {*} dbToSearch база данных для поиска документа
@@ -209,21 +185,34 @@ export default class dbController {
     const paintingsIdArr = req.paintingsIdArr;
     let check = true;
 
+    function isArray(variable) {
+      return Array.isArray(variable);
+    }
+    function isOptionalArray(arr) {
+      return (
+        arr.every((item) => !Array.isArray(item)) &&
+        arr.length > 0 &&
+        arr.every((item) => typeof item === "string" && item.trim() !== "")
+      );
+    }
+
     if (paintingsIdArr) {
-      check = await this.checkId(requestId, "buyReq");
+      if (isArray(paintingsIdArr) && isOptionalArray(paintingsIdArr)) {
+        check = await this.checkId(requestId, "buyReq");
 
-      if (check) {
-        for (let i = 0; i < paintingsIdArr.length; i++) {
-          check = await this.checkId(paintingsIdArr[i], "painting");
+        if (check) {
+          for (let i = 0; i < paintingsIdArr.length; i++) {
+            check = await this.checkId(paintingsIdArr[i], "painting");
 
-          if (!check) {
-            break;
+            if (!check) {
+              break;
+            }
           }
         }
-      }
 
-      if (check) {
-        await this.processBuyReq(requestId, paintingsIdArr);
+        if (check) {
+          await this.processBuyReq(requestId, paintingsIdArr);
+        }
       }
     } else {
       check = await this.checkId(requestId, "orderReq");
@@ -232,7 +221,7 @@ export default class dbController {
         await this.changeOrderReqStatus(requestId);
       }
     }
-
+    console.log(check);
     return check;
   }
 
