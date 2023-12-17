@@ -37,7 +37,8 @@ requestRouter.post("/buyPainting", (req, res) => {
 
   if (
     optionalBody.isPresent() &
-    (typeof newBuyReq.paintingsIdArr === 'object')
+    (typeof newBuyReq.paintingsIdArr === "object") &
+    (newBuyReq.paintingsIdArr.length != 0)
   ) {
     dataBase.addBuyReq(newBuyReq);
     res.status(200).json("OK");
