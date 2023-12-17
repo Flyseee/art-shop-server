@@ -15,7 +15,6 @@ requestRouter.post("/orderPainting", (req, res) => {
   const newOrderReq = req.body;
   const optionalBody = new OptionalBody(newOrderReq, orderReqFields);
 
-
   if (optionalBody.isPresent()) {
     dataBase.addOrderReq(newOrderReq);
     res.status(200).json("OK");
@@ -36,12 +35,15 @@ requestRouter.post("/buyPainting", (req, res) => {
   const newBuyReq = req.body;
   const optionalBody = new OptionalBody(newBuyReq, buyReqFields);
 
-  if (optionalBody.isPresent()) {
+  if (
+    optionalBody.isPresent() &
+    (typeof newBuyReq.paintingsIdArr === 'object')
+  ) {
     dataBase.addBuyReq(newBuyReq);
     res.status(200).json("OK");
   } else {
     res.status(400).json({
-      msg: "Передано пустое тело запроса или в теле запроса нет необходимого поля",
+      msg: "Передано пустое тело запроса или тело запроса некорректно",
     });
   }
 });
@@ -57,7 +59,7 @@ requestRouter.post("/processRequest", async (req, res) => {
     if (result) {
       res.status(200).json("OK");
     } else {
-      res.status(404).json({msg: 'Заявка или картина не найдена'})
+      res.status(404).json({ msg: "Заявка или картина не найдена" });
     }
   } else {
     res.status(400).json({
