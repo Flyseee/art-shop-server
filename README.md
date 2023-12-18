@@ -82,34 +82,13 @@
     "_id": "U0HIVbsHkwGpRNTs"
   }
 ]
-```
-
-### tokens
-
-```json
-[
-  {
-    "token":"c484idFo1mWBqEGZZx6X",
-    "_id":"EEBoQ8cSxKfrwxa7"
-  }
-]
-```
-
 ---
 
 ## Методы
 
 - `GET` `../`
   <br>&emsp; Для проверки работы сервиса.
-- `POST` `../autorisation`
-  <br>&emsp; Для проверки правильности токена. 
-  Метод возвращает название файла страницы администратора. 
-  Как тело запроса метод ожидает объект следующего вида: <br>
 
-```json
-{
-  "token": "c484idFo1mWBqEGZZx6X"
-}
 ```
 
 - `GET` `../paintings/getAllPaintings`
